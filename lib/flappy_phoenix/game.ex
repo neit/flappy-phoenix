@@ -1,8 +1,10 @@
 defmodule FlappyPhoenix.Game do
   alias __MODULE__
   defstruct [:bird, :pipes, :score, :state, :updated]
-  @gravity 1
+  @gravity 0.8
   @tick 100_000_000
+  @pipe_height 43
+  @min_pipe_gap 10
 
   def new() do
     %Game{
@@ -57,9 +59,12 @@ defmodule FlappyPhoenix.Game do
   defp add_pipes(game) do
     case Enum.find(game.pipes, fn p -> p.x > 50 end) do
       nil ->
+        down_pipe_y = Enum.random(-30..0)
+        up_pipe_y = max(down_pipe_y + @pipe_height + @min_pipe_gap, Enum.random(43..80))
+
         pipes = [
-          %{x: 100, y: Enum.random(-30..0), height: 45, dir: :down},
-          %{x: 100, y: Enum.random(40..80), height: 45, dir: :up}
+          %{x: 100, y: down_pipe_y, height: @pipe_height, dir: :down},
+          %{x: 100, y: up_pipe_y, height: @pipe_height, dir: :up}
         ]
 
         %{game | pipes: game.pipes ++ pipes}
